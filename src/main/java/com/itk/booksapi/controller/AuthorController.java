@@ -47,9 +47,7 @@ public class AuthorController {
 			@ApiResponse(description = "Authors found successfully", responseCode = "200", content = @Content(mediaType = "application/json", schema = @Schema(implementation = PagedResult.class))),
 			@ApiResponse(description = "Author not found", responseCode = "404", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorDTO.class))) }, parameters = {
 					@Parameter(name = "search", required = false, description = "A request parameter to search in name and last name of the authors"),
-					@Parameter(name = "size", required = false, description = "The size of the page"),
-					@Parameter(name = "sort", required = false, description = "The request parameter to sort by id, name or last name"),
-					@Parameter(name = "pageNumber", required = false, description = "The page to show in the json response") })
+					@Parameter(name = "pageable", required = false, description = "The request query for sorting, pageSize, pageNumber, offset and paged", content = @Content(schema = @Schema(implementation = Pageable.class))) })
 	public ResponseEntity<Object> findAll(@RequestParam(name = "search", required = false) String search,
 			Pageable pageable) {
 		return new ResponseEntity<>(authorService.findAll(search, pageable), HttpStatus.OK);

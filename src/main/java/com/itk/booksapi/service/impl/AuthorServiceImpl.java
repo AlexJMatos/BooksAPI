@@ -35,9 +35,10 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public PagedResult<AuthorDTO> findAll(String search, Pageable pageable) {
-		
+		/* Create an specification for authors */
 		Specification<Author> authorSpecification = Specification.where(null);
 		
+		/* Search the parameter in the name and last name of the author */
 		if (search != null) {
 			Specification<Author> nameSpecification = Specification
 					.where(new AuthorSpecification(new SearchCriteria(Author_.NAME, "~", search)));
@@ -48,7 +49,15 @@ public class AuthorServiceImpl implements AuthorService {
 			authorSpecification = authorSpecification.or(lastNameSpecification);
 		}
 
+		/* Find all authors with the given specification */
 		Page<Author> pageAuthors = authorRepository.findAll(authorSpecification, pageable);
+		
+		/* Throw an exception in case no author was found */
+		if (pageAuthors.isEmpty()) {
+			throw new ElementNotFoundException("No author found with given search parameter");
+		}
+		
+		/* Create the PagedResult DTO for the response */
 		List<AuthorDTO> listAuthors = new ArrayList<>();
 		for (Author author : pageAuthors.getContent()) {
 			AuthorDTO authorDTO = new AuthorDTO();
@@ -68,28 +77,32 @@ public class AuthorServiceImpl implements AuthorService {
 
 	@Override
 	public AuthorDTO findById(long id) {
+		/* Find the author */
 		Optional<Author> result = authorRepository.findById(id);
 		Author author = null;
 		AuthorDTO authorDTO = new AuthorDTO();
+		
+		/* If present then create the DTO and return the object */
 		if (result.isPresent()) {
 			author = result.get();
 			authorDTO.setId(author.getId());
 			authorDTO.setName(author.getName());
 			authorDTO.setLastName(author.getLastName());
 			return authorDTO;
-		} else {
+		} else { // Otherwise, throw an exception
 			throw new ElementNotFoundException("Author with ID - " + id + " not found");
 		}
 	}
 
 	@Override
 	public AuthorDTO save(AuthorRequest authorAddRequest) {
+		/* Set the values for the new author and save*/
 		Author author = new Author();
 		author.setName(authorAddRequest.getName());
 		author.setLastName(authorAddRequest.getLastName());
 		author = authorRepository.save(author);
 
-		// Return the Author DTO
+		// Return the Author DTO as a response 
 		AuthorDTO authorDTO = new AuthorDTO();
 		authorDTO.setId(author.getId());
 		authorDTO.setName(author.getName());
@@ -108,7 +121,7 @@ public class AuthorServiceImpl implements AuthorService {
 
 			// Delete the author
 			authorRepository.deleteById(id);
-		} else {
+		} else { // If no author found then throw an exception
 			throw new ElementNotFoundException("Author with ID - " + id + " not found");
 		}		
 	}

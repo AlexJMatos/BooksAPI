@@ -15,6 +15,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -25,6 +26,7 @@ public class Author {
 	@Id
 	@NotNull(message = "ID must not be null")
 	@Column(name = "id")
+	@Min(1)
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private long id;
 	

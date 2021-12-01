@@ -14,7 +14,10 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.Range;
 
 @Entity
 @Table(name = "books")
@@ -24,6 +27,7 @@ public class Book {
 	@Column(name = "isbn")
 	@NotNull(message = "ISBN cannot be null")
 	@Size(min = 13, max = 13, message = "ISBN should be 13 digits")
+	@Pattern(regexp="^(0|[1-9][0-9]*)$")
 	private String isbn;
 	
 	@Column(name = "title")
@@ -38,10 +42,12 @@ public class Book {
 	
 	@Column(name = "edition_number")
 	@NotNull(message = "Edition number cannot be null")
+	@Range(min = 1, max = 999)
 	private int editionNumber;
 	
 	@Column(name = "copyright")
 	@NotNull(message = "Copyright year cannot be null")
+	@Range(min = 1, max = 9999)
 	private int copyright;
 	
 	@ElementCollection

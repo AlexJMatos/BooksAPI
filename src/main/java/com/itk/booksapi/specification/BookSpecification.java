@@ -6,6 +6,7 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
 import org.springframework.data.jpa.domain.Specification;
+
 import com.itk.booksapi.model.Book;
 
 public class BookSpecification implements Specification<Book> {
@@ -20,6 +21,9 @@ public class BookSpecification implements Specification<Book> {
 	public Predicate toPredicate(Root<Book> root, CriteriaQuery<?> query, CriteriaBuilder criteriaBuilder) {
 		if (searchCriteria.getOperation().equals("~")) {
 			return criteriaBuilder.like(root.get(searchCriteria.getKey()),
+					"%" + searchCriteria.getValue().toString() + "%");
+		} else if (searchCriteria.getOperation().equals("@")) {
+			return criteriaBuilder.like(root.join("authors").get(searchCriteria.getKey()),
 					"%" + searchCriteria.getValue().toString() + "%");
 		}
 		return null;
